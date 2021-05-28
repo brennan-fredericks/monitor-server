@@ -1,9 +1,38 @@
 const { once } = require('events');
-const { createReadStream } = require('fs');
+const { createReadStream, readdir } = require('fs');
+const Path = require('path');
 const { createInterface } = require('readline');
 
+async function parseToObject(line) {
+    try {
+        const packetObject = JSON.parse(line);
 
-async function processSamples(filepath) {
+        return packetObject;
+    }
+    catch (err) {
+        console.error(`logged: ${err}`);
+        return null;
+    }
+}
+
+// retrieve list of files in director
+async function postSamples(filepath) {
+
+    readdir(filepath, async (err, files) => {
+        if (err) {
+            console.error(err);
+            throw new Error(err);
+        }
+
+
+        files.slice(0, 1).forEach((value) => {
+            processFile(Path.join(filepath, value));
+        })
+    });
+}
+
+async function processFile(filepath) {
+
     try {
         // create file stream and input to readline
         const rl = createInterface({
@@ -11,16 +40,23 @@ async function processSamples(filepath) {
             crlfDelay: Infinity
         });
 
-        rl.on('line', () => {
-            console.log("======================");
-        })
-
-        rl.on('line', (line) => {
+        rl.on('line', async (line) => {
             // post to database
             // api
-            console.log(line);
+            const packet = await parseToObject(line);
+            if (packet) {
+                console.log(Object.keys(packet));
+                console.log(Object.entries(packet));
+            } else {
+                console.log(packet);
+            }
+
+            process.nextTick(() => {
+                rl.emit('close');
+            });
         })
 
+        // close file after first line read?
         // wait until file is closed
         await once(rl, 'close');
         console.info(`Done processing ${filepath}`)
@@ -31,4 +67,5 @@ async function processSamples(filepath) {
     }
 }
 
-processSamples('./supporting_scripts/packet_sample_data/processed_packets_sample.lsp');
+//processSamples('./supporting_scripts/packet_sample_data/processed_packets_sample.lsp');
+postSamples('./supporting_scripts/packet_sample_data/');
