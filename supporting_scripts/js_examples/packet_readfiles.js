@@ -3,6 +3,7 @@ const { createReadStream, readdir } = require('fs');
 const Path = require('path');
 const { createInterface } = require('readline');
 
+
 async function parseToObject(line) {
     try {
         const packetObject = JSON.parse(line);

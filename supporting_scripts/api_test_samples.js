@@ -1,7 +1,9 @@
+const { kMaxLength } = require('buffer');
 const { once } = require('events');
-const { readdir, readFile, readLine, createReadStream } = require('fs');
+const { readdir, createReadStream } = require('fs');
 const Path = require('path');
 const { createInterface } = require('readline');
+const { PacketValidator } = require('./protocol_schema_validation')
 
 function Failure(msg) {
     //console.error(`Failure Callback: ${msg}`);
@@ -27,7 +29,7 @@ async function getFiles(directory) {
     });
 }
 
-async function parseToObject(sample_string) {
+async function _parseToObject(sample_string) {
     try {
 
         return JSON.parse(sample_string)
@@ -36,6 +38,30 @@ async function parseToObject(sample_string) {
         console.error(`${err}`);
         return null;
     }
+}
+
+async function _validatePacket(packet) {
+
+    // check overall structure
+    if (!PacketValidator.get('Packet')(packet)) return false;
+
+    // check that the key and values are valid, skip unknown keys
+    for (const [k, v] of Object.entries(packet)) {
+
+        //console.log(typeof PacketValidator);
+        if (PacketValidator.has(k)) {
+
+            // stop validating packet if invalid data is found 
+            if (!PacketValidator.get(k)(packet)) return false;
+        }
+        else {
+            //packet has additional keys, do nothing for now
+            console.warn(`contained addiotional data which was not processed ${k}, ${v}`);
+        }
+    }
+
+    // packet has valid data
+    return true;
 }
 
 async function _loadSample(validFile) {
@@ -49,17 +75,21 @@ async function _loadSample(validFile) {
 
         // register for on line event
         rl.on('line', async (sample) => {
-            const packet = await parseToObject(sample);
+
+            // try to convert string to object
+            const packet = await _parseToObject(sample);
 
             if (packet) {
                 // able to parse string to JSON
-                console.info(packet);
+
+                const r = await _validatePacket(packet);
+                //console.info(PacketValidator.validatePacket(packet));
                 // validate contents
                 //const valid 
             }
 
 
-        })
+        });
 
         // wait until we receive the file close event
         await once(rl, 'close');
@@ -74,7 +104,7 @@ async function loadSamples(validFiles) {
     // allow application to continue to the next line
 
     return new Promise((resolve, reject) => {
-        validFiles.forEach(_loadSample)
+        validFiles.slice(1, 2).forEach(_loadSample)
         resolve('done loading samples');
     });
 
