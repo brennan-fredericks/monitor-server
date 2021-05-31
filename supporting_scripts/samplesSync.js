@@ -479,7 +479,7 @@ function readValidSamples(sampleFile) {
             const res = parseToObject(sample)
 
             if (res) {
-                dynamicValidator(res);
+                console.log(dynamicValidator(res));
                 //console.log(Object.entries(res));
 
                 //console.log(res.__proto__)
@@ -497,7 +497,7 @@ function readValidSamples(sampleFile) {
 }
 
 
-const files = validSampleFiles('./supporting_scripts/packet_sample_data/');
+//const files = validSampleFiles('./supporting_scripts/packet_sample_data/');
 
 readValidSamples('./supporting_scripts/packet_sample_data/1gig_sample.lsp');
 

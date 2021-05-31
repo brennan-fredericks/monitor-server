@@ -52,7 +52,7 @@ async function _validatePacket(packet) {
         if (PacketValidator.has(k)) {
 
             // stop validating packet if invalid data is found 
-            if (!PacketValidator.get(k)(packet)) return false;
+            if (!PacketValidator.get(k)(v)) return false;
         }
         else {
             //packet has additional keys, do nothing for now
@@ -83,6 +83,7 @@ async function _loadSample(validFile) {
                 // able to parse string to JSON
 
                 const r = await _validatePacket(packet);
+                //console.log(r);
                 //console.info(PacketValidator.validatePacket(packet));
                 // validate contents
                 //const valid 
