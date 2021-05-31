@@ -1,4 +1,4 @@
-const { kMaxLength } = require('buffer');
+
 const { once } = require('events');
 const { readdir, createReadStream } = require('fs');
 const Path = require('path');
@@ -88,7 +88,6 @@ async function _loadSample(validFile) {
                 //const valid 
             }
 
-
         });
 
         // wait until we receive the file close event
@@ -104,7 +103,7 @@ async function loadSamples(validFiles) {
     // allow application to continue to the next line
 
     return new Promise((resolve, reject) => {
-        validFiles.slice(1, 2).forEach(_loadSample)
+        validFiles.slice(0, 1).forEach(_loadSample)
         resolve('done loading samples');
     });
 
