@@ -1,11 +1,10 @@
 /*
 */
-
 const Ajv = require("ajv");
+const { MongoClient } = require('mongodb');
 
 const dynAjv = new Ajv({ allErrors: true });
 const PacketValidator = new Map()
-
 
 const schemaInfo = {
     type: 'object',
@@ -354,30 +353,6 @@ async function validatePacket(packet) {
 
 
 
-async function packetPostHandler(request, reply) {
-    // validate internal data
-    const valid = await validatePacket(request.body);
-
-    if (valid) {
-        reply
-            .code(201)
-            .header('Content-Type', 'application/json; charset=utf-8')
-            .send({ message: 'added packet data' });
-    }
-
-    reply
-        .code(400)
-        .header('Content-Type', 'application/json; charset=utf-8')
-        .send({ message: 'packet data invalid' });
-
-}
-
-async function packetGetHandler(request, reply) {
-    reply
-        .code(200)
-        .header('Content-Type', 'application/json; charset=utf-8')
-        .send({ message: 'packet endpoint 200' });
-}
 // add auto completion support
 /**
  * 
@@ -440,4 +415,37 @@ module.exports = async function (fastify, opts) {
         response: schemaPostResponse
     }
     fastify.post('/', { schema }, packetPostHandler);
+
+
+    async function packetPostHandler(request, reply) {
+        // validate internal data
+        const valid = await validatePacket(request.body);
+        console.log(fastify.config);
+        if (valid) {
+
+            // add to database
+
+            reply
+                .code(201)
+                .header('Content-Type', 'application/json; charset=utf-8')
+                .send({ message: 'added packet data' });
+        }
+
+        reply
+            .code(400)
+            .header('Content-Type', 'application/json; charset=utf-8')
+            .send({ message: 'packet data invalid' });
+
+    }
+
+
+    async function packetGetHandler(request, reply) {
+        reply
+            .code(200)
+            .header('Content-Type', 'application/json; charset=utf-8')
+            .send({ message: 'packet endpoint 200' });
+    }
+
+
+
 }

@@ -1,10 +1,36 @@
 'use strict'
-
+const { MongoClient } = require('mongodb');
 const path = require('path')
 const AutoLoad = require('fastify-autoload')
 
+/**
+ * 
+ * @param {import('fastify').FastifyInstance} fastify 
+ * @param {*} opts 
+ */
 module.exports = async function (fastify, opts) {
   // Place here your custom code!
+
+  //mongo database configuration
+  fastify.decorate('config', {
+    'DB_URI': process.env.DB_URI,
+    'DB_NAME': process.env.DB_NAME
+  })
+
+  //check if database available
+  const client = new MongoClient(fastify.config.DB_URI);
+  try {
+    await client.connect()
+    const db = client.db(fastify.config.DB_NAME);
+    console.info(`Connected to database ${db.databaseName}`)
+    console.info(db.collection('AF_Packet'));
+  }
+  catch (ex) {
+    console.error(`Unable to connect to database ${fastify.config.DB_URI}`);
+  }
+  finally {
+    await client.close();
+  }
 
   // Do not touch the following lines
 

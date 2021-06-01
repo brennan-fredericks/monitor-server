@@ -2,6 +2,7 @@
 
 - fastify web framework
     - [x] moved application to node docker image
+    - [ ] able to authenticate mongo client, create dedicated client
     - [x] Endpoint `packets/` 
         - [x] GET: check if endpoint is available  
         - [] POST: 
@@ -10,7 +11,9 @@
 
 - mongo database
     - [x] added mongo database image
-
+    - [] login into mongo client and create database.
+    - [] create a priliveged admin user to manage db and stop using root account
+    - [] create a user with readWrite actions only on the packets database. account to be used by fastify_api
 
 
 - scripts
@@ -19,6 +22,6 @@
         - `axios`: investigate how to specify port? only able to specify hostname
   
 
-
 # TODO
+ - build connection uri from secrets, currently using enviromental variable
  

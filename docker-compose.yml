@@ -7,6 +7,9 @@ services:
             context: ./fastify_api
             dockerfile: Dockerfile
         container_name: fastify_api
+        environment: 
+            DB_URI: ${MONGO_DB_URI}
+            DB_NAME: packets
         volumes:
             - type: bind
               source: ./fastify_api/
@@ -23,8 +26,8 @@ services:
             dockerfile: Dockerfile
         container_name: mongo_db
         environment: 
-            MONGO_INITDB_ROOT_USERNAME: root
-            MONGO_INITDB_ROOT_PASSWORD: tmpfakepassword
+            MONGO_INITDB_ROOT_USERNAME: ${MONGO_DB_ROOT_USERNAME}
+            MONGO_INITDB_ROOT_PASSWORD: ${MONGO_DB_ROOT_PASSWORD}
         volumes:
             - type: bind
               source: .tmpdatabase/
