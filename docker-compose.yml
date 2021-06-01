@@ -1,6 +1,22 @@
 version: "3.7"
 
 services:
+
+    fastify_api:
+        build:
+            context: ./fastify_api
+            dockerfile: Dockerfile
+        container_name: fastify_api
+        volumes:
+            - type: bind
+              source: ./fastify_api/
+              target: /app 
+        ports:
+            - 3000:3000
+        restart: always
+        depends_on: 
+            - mongo_db 
+
     mongo_db:
         build:
             context: ./mongo_db
