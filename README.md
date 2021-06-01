@@ -2,7 +2,8 @@
 
 - fastify web framework
     - [x] moved application to node docker image
-    - [ ] able to authenticate mongo client, create dedicated client
+    - [x] able to authenticate mongo client, create dedicated client
+    - [] build database uri from enviromental variables and docket secrets
     - [x] Endpoint `packets/` 
         - [x] GET: check if endpoint is available  
         - [] POST: 
@@ -12,8 +13,9 @@
 - mongo database
     - [x] added mongo database image
     - [] login into mongo client and create database.
-    - [] create a priliveged admin user to manage db and stop using root account
-    - [] create a user with readWrite actions only on the packets database. account to be used by fastify_api
+        - [x] create a priliveged admin user to manage db and stop using root account
+        - [x] create a user with readWrite actions only on the packets database. account to be used by fastify_api
+        - [] automate with https://docs.mongodb.com/manual/tutorial/write-scripts-for-the-mongo-shell/
 
 
 - scripts
