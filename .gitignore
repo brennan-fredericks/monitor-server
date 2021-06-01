@@ -104,3 +104,6 @@ dist
 .tern-port
 
 **/*.lsp
+
+# mongo db local file
+.tmpdatabase/

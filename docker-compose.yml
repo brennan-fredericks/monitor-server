@@ -1,0 +1,18 @@
+version: "3.7"
+
+services:
+    mongo_db:
+        build:
+            context: ./mongo_db
+            dockerfile: Dockerfile
+        container_name: mongo_db
+        environment: 
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: tmpfakepassword
+        volumes:
+            - type: bind
+              source: .tmpdatabase/
+              target: /data/db
+        ports:
+            -  27017:27017
+        restart: always
