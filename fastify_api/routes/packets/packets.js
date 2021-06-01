@@ -360,23 +360,23 @@ async function packetPostHandler(request, reply) {
 
     if (valid) {
         reply
-            .code(200)
+            .code(201)
             .header('Content-Type', 'application/json; charset=utf-8')
-            .send({ message: 'We 200' });
+            .send({ message: 'added packet data' });
     }
 
     reply
         .code(400)
         .header('Content-Type', 'application/json; charset=utf-8')
-        .send({ message: 'Oops 400, invalid data' });
-
+        .send({ message: 'packet data invalid' });
 
 }
 
 async function packetGetHandler(request, reply) {
-
-    reply.code(300)
-    return { message: 'We 200' };
+    reply
+        .code(200)
+        .header('Content-Type', 'application/json; charset=utf-8')
+        .send({ message: 'packet endpoint 200' });
 }
 // add auto completion support
 /**
