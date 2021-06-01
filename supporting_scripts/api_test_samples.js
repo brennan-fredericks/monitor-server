@@ -1,6 +1,8 @@
 
 const { once } = require('events');
 const { readdir, createReadStream } = require('fs');
+//const fetch = require('node-fetch');
+const axios = require('axios');
 const Path = require('path');
 const { createInterface } = require('readline');
 const { PacketValidator } = require('./protocol_schema_validation')
@@ -20,12 +22,19 @@ async function getFiles(directory) {
                 return;
             }
 
-            // create file path
-            resolve(files.map((value) => {
-                return Path.join(directory, value);
-            }));
+            try {
+                const filepaths = files.map((value) => {
+                    return Path.join(directory, value);
+                });
 
-        })
+                resolve(filepaths);
+            }
+            catch (ex) {
+                // Path.join can throw exception for invalid arguments
+                reject(`${ex}`);
+            }
+
+        });
     });
 }
 
@@ -64,6 +73,21 @@ async function _validatePacket(packet) {
     return true;
 }
 
+async function _postPacketData(pdata) {
+
+    return axios({
+        method: 'POST',
+        url: 'packets',
+        baseUrl: 'localhost',
+        port: 3000,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: JSON.stringify(pdata)
+    })
+
+
+}
 async function _loadSample(validFile) {
     // avoid load large files into memory before processing 
 
@@ -82,8 +106,17 @@ async function _loadSample(validFile) {
             if (packet) {
                 // able to parse string to JSON
 
-                const r = await _validatePacket(packet);
-                //console.log(r);
+                const valid = await _validatePacket(packet);
+
+                if (valid) {
+                    // post data to server
+                    _postPacketData(packet).then(response_data => console.log(response_data)).catch((reason) => {
+                        console.error(`${reason}`);
+                    });
+                }
+                else {
+                    console.warn(`Invalid packet ${packet}`);
+                }
                 //console.info(PacketValidator.validatePacket(packet));
                 // validate contents
                 //const valid 
