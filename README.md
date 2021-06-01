@@ -1,6 +1,7 @@
 # monitor-server
 
-- fastify_web_framework
+- fastify web framework
+    - [x] moved application to node docker image
     - [x] Endpoint `packets/` 
         - [x] GET: check if endpoint is available  
         - [] POST: 
@@ -8,7 +9,7 @@
             - [] add json data to mongo database
 
 - mongo database
-    - [x] mongo database up and running in docker
+    - [x] added mongo database image
 
 
 
