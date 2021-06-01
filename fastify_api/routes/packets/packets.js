@@ -334,12 +334,10 @@ async function validatePacket(packet) {
     // check that the key and values are valid, skip unknown keys
     for (const [k, v] of Object.entries(packet)) {
 
-        //console.log(typeof PacketValidator);
         if (PacketValidator.has(k)) {
-            //console.log(k, v);
+
             // stop validating packet if invalid data is found 
-            //if (!PacketValidator.get(k)(packet)) return false;
-            console.log(PacketValidator.get(k)(v));
+            if (!PacketValidator.get(k)(v)) return false;
 
         }
         else {
@@ -352,16 +350,32 @@ async function validatePacket(packet) {
     return true;
 }
 
+
+
+
+
 async function packetPostHandler(request, reply) {
     // validate internal data
-    console.log(await validatePacket(request.body));
+    const valid = await validatePacket(request.body);
 
-    return { message: 'We 201' };
+    if (valid) {
+        reply
+            .code(200)
+            .header('Content-Type', 'application/json; charset=utf-8')
+            .send({ message: 'We 200' });
+    }
+
+    reply
+        .code(400)
+        .header('Content-Type', 'application/json; charset=utf-8')
+        .send({ message: 'Oops 400, invalid data' });
+
+
 }
 
 async function packetGetHandler(request, reply) {
 
-
+    reply.code(300)
     return { message: 'We 200' };
 }
 // add auto completion support
@@ -372,9 +386,18 @@ async function packetGetHandler(request, reply) {
  */
 module.exports = async function (fastify, opts) {
 
-
+    const schemaRootResponse = {
+        response: {
+            200: {
+                type: 'object',
+                properties: {
+                    message: { type: 'string' }
+                }
+            }
+        }
+    }
     // add schema for response
-    fastify.get('/', packetGetHandler);
+    fastify.get('/', { schemaRootResponse }, packetGetHandler);
 
     const bodyJsonSchema = {
         type: 'object',
@@ -394,9 +417,27 @@ module.exports = async function (fastify, opts) {
         required: ['content-type']
     }
 
+    const schemaPostResponse = {
+        response: {
+            'xxx': {
+                type: 'object',
+                properties: {
+                    message: { type: 'string' }
+                }
+            },
+            201: {
+                message: { type: 'string' }
+            }
+            ,
+            400: {
+                message: { type: 'string' }
+            }
+        }
+    }
     const schema = {
         body: bodyJsonSchema,
-        headers: headersJsonSchema
+        headers: headersJsonSchema,
+        response: schemaPostResponse
     }
     fastify.post('/', { schema }, packetPostHandler);
 }
