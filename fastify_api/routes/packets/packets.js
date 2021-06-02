@@ -417,7 +417,6 @@ module.exports = async function (fastify, opts) {
     async function packetPostHandler(request, reply) {
         // validate internal data
         const valid = await validatePacket(request.body);
-        console.log(fastify.config);
         if (valid) {
 
             // add to database
@@ -436,9 +435,33 @@ module.exports = async function (fastify, opts) {
 
     }
 
+    async function addToCollection(collection, protocol_data) {
+        const commandResult = await collection.insertOne(protocol_data)
+        console.log(typeof commandResult);
+    }
+
     // add data to mongo database
     async function packetDatabase(packet_data) {
-        console.log(packet_data);
+        const client = new MongoClient(fastify.config.DB_URI);
+        // open database connection
+        try {
+            await client.connect()
+            const packetDb = client.db(fastify.config.DB_NANE);
+
+            Object.entries(packet_data).forEach(async ([protocol, data]) => {
+                const collection = packetDb.collection(protocol);
+                await addToCollection(collection, data);
+            })
+
+
+        }
+        catch (ex) {
+            console.error(ex);
+        }
+        finally {
+            client.close();
+        }
+
     }
 
 

@@ -8,7 +8,7 @@
         - [x] GET: check if endpoint is available  
         - [] POST: 
             - [x] added packet JSON schema validation and response with appropriate html error code on success or failure.
-            - [] add packet data to mongo database also add timestamp, 
+            - [] add packet data to mongo database also inject on create timestamp, mongodb will create collection if it doesn't exist
 
 - mongo database
     - [x] added mongo database image
@@ -16,7 +16,7 @@
         - [x] create a priliveged admin user to manage db and stop using root account
         - [x] create a user with readWrite actions only on the packets database. account to be used by fastify_api
         - [] automate with https://docs.mongodb.com/manual/tutorial/write-scripts-for-the-mongo-shell/
-
+    - [] mongo db indexes? requires further reading https://docs.mongodb.com/drivers/node/fundamentals/indexes/
 
 - scripts
     - [] create a script load `processed packets` from a file and post to `packets` endpoint. 
@@ -27,4 +27,6 @@
 
 # TODO
  - build connection uri from secrets, currently using enviromental variable
+ - create script to configure databases, collections and users for mongo db,
+ - 
  
