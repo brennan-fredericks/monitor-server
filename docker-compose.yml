@@ -9,7 +9,7 @@ services:
         container_name: fastify_api
         environment: 
             DB_URI: ${MONGO_DB_URI}
-            DB_NAME: packets
+            DB_NAME: ${MONGO_DB_PACKETS}
         volumes:
             - type: bind
               source: ./fastify_api/

@@ -350,9 +350,6 @@ async function validatePacket(packet) {
 }
 
 
-
-
-
 // add auto completion support
 /**
  * 
@@ -424,18 +421,24 @@ module.exports = async function (fastify, opts) {
         if (valid) {
 
             // add to database
+            const op_sucess = await packetDatabase(request.body)
 
             reply
                 .code(201)
                 .header('Content-Type', 'application/json; charset=utf-8')
-                .send({ message: 'added packet data' });
+                .send({ message: 'success' });
         }
 
         reply
             .code(400)
             .header('Content-Type', 'application/json; charset=utf-8')
-            .send({ message: 'packet data invalid' });
+            .send({ message: 'failure' });
 
+    }
+
+    // add data to mongo database
+    async function packetDatabase(packet_data) {
+        console.log(packet_data);
     }
 
 
