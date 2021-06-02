@@ -435,9 +435,22 @@ module.exports = async function (fastify, opts) {
 
     }
 
-    async function addToCollection(collection, protocol_data) {
+    async function addToCollection(collection, protocol_data, return_insertedId = false) {
+
+        //added created timestamp
+        protocol_data.Created_Timestamp = Date.now();
         const commandResult = await collection.insertOne(protocol_data)
-        console.log(typeof commandResult);
+        //console.log(Object.keys(protocol_data));
+
+        if (commandResult.result.n !== commandResult.result.ok) {
+            console.error('Some packets were not added to collection')
+        }
+
+        if (return_insertedId) {
+            return commandResult.insertedId;
+        }
+
+        //console.log(commandResult.insertedId);
     }
 
     // add data to mongo database
@@ -448,9 +461,20 @@ module.exports = async function (fastify, opts) {
             await client.connect()
             const packetDb = client.db(fastify.config.DB_NANE);
 
-            Object.entries(packet_data).forEach(async ([protocol, data]) => {
+            // retrieve packet protocols
+            const protocol_keys = Object.keys(packet_data);
+            // remove info key add insert to collection first. all other protocols will have a refence to this document
+            protocol_keys.splice(protocol_keys.indexOf('Info'), 1)
+
+            const collection = packetDb.collection('Info');
+            const insertedId = await addToCollection(collection, packet_data['Info'], return_insertedId = true);
+
+            protocol_keys.forEach(async (protocol) => {
                 const collection = packetDb.collection(protocol);
-                await addToCollection(collection, data);
+                // add reference key
+                packet_data[protocol].Info_Reference = insertedId
+
+                await addToCollection(collection, packet_data[protocol]);
             })
 
 
