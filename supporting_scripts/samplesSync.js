@@ -6,6 +6,7 @@
 const { readdirSync, fstatSync, openSync, closeSync, readFileSync } = require('fs');
 const Path = require('path');
 const Ajv = require("ajv");
+const http = require("http");
 const { type } = require('os');
 const { compileSchema } = require('ajv/dist/compile');
 const ajv = new Ajv({ allErrors: true })
@@ -499,6 +500,40 @@ function readValidSamples(sampleFile) {
 
 //const files = validSampleFiles('./supporting_scripts/packet_sample_data/');
 
-readValidSamples('./supporting_scripts/packet_sample_data/1gig_sample.lsp');
+//readValidSamples('./supporting_scripts/packet_sample_data/1gig_sample.lsp');
 
+const fakeData = JSON.stringify(
+    {
+        "Packet_802_3": { "Destination_MAC": "E0:D5:5E:E3:4C:3F", "Source_MAC": "D0:37:45:78:14:38", "Ethertype": 2048 },
+        "IPv4": { "Version": 4, "IHL": 5, "DSCP": 4, "ECN": 0, "Total_Length": 140, "Identification": 58602, "Flags": 0, "Fragment_Offset": 0, "TTL": 64, "Protocol": 6, "Header_Checksum": 16743, "Source_Address": "10.0.0.1", "Destination_Address": "10.0.0.10", "Options": {} },
+        "TCP": { "Source_Port": 3333, "Destination_Port": 61251, "Sequence_Number": 1844263974, "Acknowledgement_Number": 3378646709, "Data_Offset": 5, "Reserved": 0, "Flags": { "NS": 0, "CWR": 0, "ECE": 0, "URG": 0, "ACK": 1, "PSH": 1, "RST": 0, "SYN": 0, "FIN": 0 }, "Window_Size": 501, "Checksum": 5257, "Urgent_Pointer": 0, "Options": {}, "Payload_Size": 100 },
+        "AF_Packet": { "Interface_Name": "eth1", "Ethernet_Protocol_Number": 2048, "Packet_Type": "PACKET_OUTGOING", "ARP_Hardware_Address_Type": 1, "Hardware_Physical_Address": "D0:37:45:78:14:38" },
+        "Info": { "Sniffed_Timestamp": 1622227622.8984737, "Processed_Timestamp": 1622227622.8993738, "Size": 154, "Submitted_Timestamp": 1622227623.2125685 }
+    }
+);
 
+const options = {
+    hotstname: 'localhost',
+    port: 3000,
+    path: '/packets',
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': fakeData.length
+    }
+}
+
+const request = http.request(options, (response) => {
+    console.log(`statusCode: ${response.statusCode}`)
+
+    response.on('data', d => {
+        process.stdout.write(d)
+    })
+});
+
+request.on('error', error => {
+    console.error(error)
+});
+
+request.write(fakeData);
+request.end();

@@ -21,8 +21,9 @@
 - scripts
     - [] create a script load `processed packets` from a file and post to `packets` endpoint. 
         - `node-fetch`: only supports https 
-        - `axios`: investigate how to specify port (defaulting to 80)? only able to specify hostname
-        - `http`: investigate implement http 1.1 post request.
+        - [] `http`: 
+            - [x] able to make post request using `http`
+            - [] use `http` to post all data read from file to endpoint. end connection when all data is posted 
   
 
 # TODO
