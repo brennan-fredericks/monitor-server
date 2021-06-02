@@ -6,9 +6,9 @@
     - [] build database uri from enviromental variables and docket secrets
     - [x] Endpoint `packets/` 
         - [x] GET: check if endpoint is available  
-        - [] POST: 
+        - [x] POST: 
             - [x] added packet JSON schema validation and response with appropriate html error code on success or failure.
-            - [] add packet data to mongo database also inject on create timestamp, mongodb will create collection if it doesn't exist
+            - [x] add packet data to mongo database also inject on create timestamp, mongodb will create collection if it doesn't exist
 
 - mongo database
     - [x] added mongo database image
