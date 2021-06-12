@@ -7,10 +7,10 @@ services:
             context: ./fastify_api
             dockerfile: Dockerfile
         container_name: fastify_api
-        environment: 
-            # uri params also used to configure connection options
-            DB_URI: ${MONGO_DB_URI}
-            DB_NAME: ${MONGO_DB_PACKETS}
+        # environment: 
+        #     # uri params also used to configure connection options
+        #     DB_URI: ${MONGO_DB_URI}
+        #     DB_NAME: ${MONGO_DB_PACKETS}
         volumes:
             - type: bind
               source: ./fastify_api/
@@ -26,12 +26,12 @@ services:
             context: ./mongo_db
             dockerfile: Dockerfile
         container_name: mongo_db
-        environment: 
-            MONGO_INITDB_ROOT_USERNAME: ${MONGO_DB_ROOT_USERNAME}
-            MONGO_INITDB_ROOT_PASSWORD: ${MONGO_DB_ROOT_PASSWORD}
+        #environment: 
+        #    MONGO_INITDB_ROOT_USERNAME: ${MONGO_DB_ROOT_USERNAME}
+        #    MONGO_INITDB_ROOT_PASSWORD: ${MONGO_DB_ROOT_PASSWORD}
         volumes:
             - type: bind
-              source: .tmpdatabase/
+              source: .devdatabase/
               target: /data/db
         ports:
             -  27017:27017

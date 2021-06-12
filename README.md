@@ -10,6 +10,13 @@
             - [x] added packet JSON schema validation and response with appropriate html error code on success or failure.
             - [x] add packet data to mongo database also inject on create timestamp, mongodb will create collection if it doesn't exist
 
+- connect extensible HTTP server framework
+    - [] create app docker app
+        - [] add route `/packets/` in folder structure
+            - [] add middleware for compression to outgoing responses library using `compression` library
+            - [] add middleware (error middleware) for packet validation, if fail should response appropriate and stop executing any futher middleware operation
+            - [] add middleware to add database to mongodb
+
 - mongo database
     - [x] added mongo database image
     - [] login into mongo client and create database.
